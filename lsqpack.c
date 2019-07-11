@@ -3046,7 +3046,8 @@ lsqpack_huff_decode (const unsigned char *src, int src_len,
 
 
 static void
-check_err (struct header_block_read_ctx *read_ctx, lsqpack_abs_id_t id)
+check_dyn_table_errors (struct header_block_read_ctx *read_ctx,
+                                                        lsqpack_abs_id_t id)
 {
     if (read_ctx->hbrc_flags & HBRC_LARGEST_REF_SET)
         read_ctx->hbrc_flags |=
@@ -3063,7 +3064,7 @@ parse_header_data (struct lsqpack_dec *dec,
 {
     const unsigned char *const end = buf + bufsz;
     struct huff_decode_retval hdr;
-    unsigned value, id;
+    unsigned value;
     size_t size;
     char *str;
     unsigned prefix_bits = ~0u;
@@ -3149,7 +3150,7 @@ parse_header_data (struct lsqpack_dec *dec,
                 {
                     value = ID_MINUS(read_ctx->hbrc_base_index, IHF.value);
                     r = hset_add_dynamic_entry(dec, read_ctx, value);
-                    check_err(read_ctx, value);
+                    check_dyn_table_errors(read_ctx, value);
                 }
                 if (r == 0)
                 {
@@ -3187,7 +3188,7 @@ parse_header_data (struct lsqpack_dec *dec,
                         ++LFINR.name_ref.dyn_entry->dte_refcnt;
                     else
                         RETURN_ERROR();
-                    check_err(read_ctx, value);
+                    check_dyn_table_errors(read_ctx, value);
                 }
                 read_ctx->hbrc_parse_ctx_u.data.state
                                     = DATA_STATE_BEGIN_READ_LFINR_VAL_LEN;
@@ -3525,7 +3526,7 @@ parse_header_data (struct lsqpack_dec *dec,
                 if (LFPBNR.reffed_entry)
                 {
                     ++LFPBNR.reffed_entry->dte_refcnt;
-                    check_err(read_ctx, value);
+                    check_dyn_table_errors(read_ctx, value);
                     read_ctx->hbrc_parse_ctx_u.data.state
                                         = DATA_STATE_BEGIN_READ_LFPBNR_VAL_LEN;
                     break;
@@ -3661,7 +3662,7 @@ parse_header_data (struct lsqpack_dec *dec,
             {
                 value = ID_PLUS(read_ctx->hbrc_base_index, IPBI.value + 1);
                 r = hset_add_dynamic_entry(dec, read_ctx, value);
-                check_err(read_ctx, value);
+                check_dyn_table_errors(read_ctx, value);
                 if (r == 0)
                 {
                     read_ctx->hbrc_parse_ctx_u.data.state
