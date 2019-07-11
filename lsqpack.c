@@ -3146,8 +3146,11 @@ parse_header_data (struct lsqpack_dec *dec,
                 if (IHF.is_static)
                     r = hset_add_static_entry(dec, read_ctx, IHF.value);
                 else
-                    r = hset_add_dynamic_entry(dec, read_ctx,
-                            (lsqpack_abs_id_t) ID_MINUS(read_ctx->hbrc_base_index, IHF.value));
+                {
+                    value = ID_MINUS(read_ctx->hbrc_base_index, IHF.value);
+                    r = hset_add_dynamic_entry(dec, read_ctx, value);
+                    check_err(read_ctx, value);
+                }
                 if (r == 0)
                 {
                     read_ctx->hbrc_parse_ctx_u.data.state
@@ -3522,13 +3525,13 @@ parse_header_data (struct lsqpack_dec *dec,
                 if (LFPBNR.reffed_entry)
                 {
                     ++LFPBNR.reffed_entry->dte_refcnt;
+                    check_err(read_ctx, value);
                     read_ctx->hbrc_parse_ctx_u.data.state
                                         = DATA_STATE_BEGIN_READ_LFPBNR_VAL_LEN;
                     break;
                 }
                 else
                     RETURN_ERROR();
-                check_err(read_ctx, value);
             }
             else if (r == -1)
                 return LQRHS_NEED;
@@ -3656,8 +3659,9 @@ parse_header_data (struct lsqpack_dec *dec,
                                                         &IPBI.dec_int_state);
             if (r == 0)
             {
-                r = hset_add_dynamic_entry(dec, read_ctx,
-                        (lsqpack_abs_id_t) ID_PLUS(read_ctx->hbrc_base_index, IPBI.value + 1));
+                value = ID_PLUS(read_ctx->hbrc_base_index, IPBI.value + 1);
+                r = hset_add_dynamic_entry(dec, read_ctx, value);
+                check_err(read_ctx, value);
                 if (r == 0)
                 {
                     read_ctx->hbrc_parse_ctx_u.data.state
