@@ -1,3 +1,8 @@
+2026-07-25
+    - 2.6.6
+    - Prevent a double-free when encoder init fails and the cleanup
+      function is called anyway.
+
 2026-06-28
     - 2.6.5
     - Fix use-after-free that occurs in specific usage.  See #87.

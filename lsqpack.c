@@ -562,6 +562,7 @@ lsqpack_enc_init (struct lsqpack_enc *enc, void *logger_ctx,
         if (!buckets)
         {
             free(enc->qpe_hist_els);
+            enc->qpe_hist_els = NULL;
             return -1;
         }
 
