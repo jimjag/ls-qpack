@@ -234,8 +234,22 @@ lsqpack_enc_encode (struct lsqpack_enc *,
     enum lsqpack_enc_flags flags);
 
 /**
- * Cancel current header block. Cancellation is only allowed if the dynamic 
- * table is not used. Returns 0 on success, -1 on failure.
+ * Cancel current header block.
+ *
+ * Encoder-stream instructions produced while encoding the header block are
+ * not cancelled and must still be sent to the peer.  In particular, dynamic
+ * table insertions remain in effect and may be used by subsequent header
+ * blocks.
+ *
+ * Note that entries inserted on behalf of a cancelled header block are not
+ * referenced by any header block and thus cannot be acknowledged via a
+ * Section Acknowledgement.  In the degenerate case -- a peer that never
+ * sends Insert Count Increment instructions and no subsequent header block
+ * referencing these or later entries -- such entries can never be evicted,
+ * preventing new insertions once the dynamic table is full.  Header blocks
+ * are still processed normally; only compression performance degrades.
+ *
+ * Returns 0 on success, -1 if there is no current header block.
  */
 int 
 lsqpack_enc_cancel_header (struct lsqpack_enc *);
