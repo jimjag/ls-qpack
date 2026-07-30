@@ -1,3 +1,7 @@
+2026-07-30
+    - 2.7.0
+    - API: lsqpack_enc_cancel_header() now cancels dynamic headers as well.
+
 2026-07-25
     - 2.6.6
     - Prevent a double-free when encoder init fails and the cleanup
